@@ -4,7 +4,11 @@ import (
 	"crypto/sha256"
 
 	"gitlab.com/NebulousLabs/merkletree"
+
+	nmt_experiments "github.com/liamsi/nmt-experiments"
 )
+
+var _ nmt_experiments.Nmt1 = &Nmt{}
 
 type Nmt struct {
 	flagHasher *flagDigest
