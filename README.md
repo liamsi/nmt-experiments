@@ -5,7 +5,7 @@ This repo contains two simple name spaced merkle tree implementations.
 The first one is shamelessly copied from [@musalbas] LazyLedger [prototype] and can be found under [./lazyledger_prototype].
 It is based on [NebulousLabs'] merkle tree implementation. It povides a particular [`hash.Hash`] [implementation](https://github.com/liamsi/nmt-experiments/blob/a093f5c6c2106a14cef0f596f42e151922e85538/lazyledger_prototype/flaghasher.go#L15) to the tree that employs a [`Flagger`] to prefix the cryptographic hash function with the min/max- namespace ID as described in the LazyLedger [academic paper].
 
-The second implementation uses [trillian]. This implementation aims to produce the same trees as the first one. Different than the first, it defines a [`LogHasher`] ([here]) and reuses a trillian (in-memory) tree implementation. Here, the `LogHasher` directly prepends the crpytographic hash function with the namespace ID bytes.
+The second implementation uses [trillian]. This implementation aims to produce the same trees as the first one. Different than the first, it defines a [`LogHasher`] ([here]) and reuses a trillian (in-memory) tree implementation. Here, the `LogHasher` directly prefixes (or flags) the crpytographic hash function with the (min/max) namespace ID bytes.
 
 
 This repository is just a playground to explore which abstractions are the right ones for a namespaced merkle tree. 
