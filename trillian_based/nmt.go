@@ -11,7 +11,7 @@ type Nmt struct {
 	*merkle.InMemoryMerkleTree
 }
 
-func NewNmt() *Nmt {
+func New() *Nmt {
 	treeHasher := NewNmtHasher(8)
 	return &Nmt{merkle.NewInMemoryMerkleTree(treeHasher)}
 }

@@ -2,6 +2,7 @@ package nmt_experiments_test
 
 import (
 	"crypto"
+	"math/rand"
 	"testing"
 
 	"github.com/google/trillian/merkle"
@@ -9,6 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gitlab.com/NebulousLabs/merkletree"
 
+	nmt_experiments "github.com/liamsi/nmt-experiments"
 	"github.com/liamsi/nmt-experiments/lazyledger_prototype"
 	"github.com/liamsi/nmt-experiments/trillian_based"
 )
@@ -34,7 +36,7 @@ func init() {
 
 func TestTrees(t *testing.T) {
 	protoTree := lazyledger_prototype.New()
-	trillianTree := trillian_based.NewNmt()
+	trillianTree := trillian_based.New()
 	for _, leaf := range leafs {
 		protoTree.Push(leaf)
 		trillianTree.Push(leaf)
@@ -57,4 +59,41 @@ func TestVanillaTrees(t *testing.T) {
 	r1 := nebTree.Root()
 	r2 := logTree.CurrentRoot().Hash()
 	assert.Equal(t, r1, r2)
+}
+func BenchmarkPushLL(b *testing.B) { benchmarkPushData(b, lazyledger_prototype.New()) }
+func BenchmarkRootLL(b *testing.B) { benchmarkComputeRoot(b, lazyledger_prototype.New()) }
+func BenchmarkPushTrill(b *testing.B) { benchmarkPushData(b, trillian_based.New()) }
+func BenchmarkRootTrill(b *testing.B) { benchmarkComputeRoot(b, trillian_based.New()) }
+
+func benchmarkPushData(b *testing.B, nmt nmt_experiments.Nmt1) {
+	leafCnt := 1
+	leafSize := 64
+	randLeafs := randLeafData(leafCnt, leafSize)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		nmt.Push(randLeafs[0])
+	}
+}
+
+func benchmarkComputeRoot(b *testing.B, nmt nmt_experiments.Nmt1) {
+	leafCnt := 1000
+	leafSize := 64
+	randLeafs := randLeafData(leafCnt, leafSize)
+	for _, leaf := range randLeafs {
+		nmt.Push(leaf)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		nmt.Push(append(randLeafs[0], 1))
+		nmt.Root()
+	}
+}
+
+func randLeafData(leafCnt int, leafSize int) [][]byte {
+	randLeafs := make([][]byte, leafCnt)
+	for i := 0; i < leafCnt; i++ {
+		randLeafs[i] = make([]byte, leafSize)
+		rand.Read(randLeafs[i])
+	}
+	return randLeafs
 }
