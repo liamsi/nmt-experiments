@@ -11,7 +11,6 @@ import (
 var _ nmt_experiments.Nmt1 = &Nmt{}
 
 type Nmt struct {
-	flagHasher *flagDigest
 	tree *merkletree.Tree
 }
 
@@ -21,10 +20,8 @@ func New() *Nmt {
 	// the flagHasher has some of the tree logic baked in:
 	// - it flags depending on if we are hashing leafs or inner nodes
 	fh := NewFlagHasher(ndf, sha256.New())
-	flDigest := fh.(*flagDigest)
-
 	tree:= merkletree.New(fh)
-	return &Nmt{flagHasher: flDigest, tree: tree}
+	return &Nmt{tree: tree}
 }
 
 func (nmt *Nmt) Push(data []byte) {
